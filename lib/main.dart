@@ -8,6 +8,7 @@ import 'package:flex_yemen_redesign/screens/map_screen.dart';
 import 'package:flex_yemen_redesign/widgets/custom_app_bar.dart';
 import 'package:flex_yemen_redesign/widgets/bottom_nav_bar.dart';
 import 'package:flex_yemen_redesign/providers/category_provider.dart';
+import 'package:flex_yemen_redesign/providers/home_provider.dart';
 import 'package:flex_yemen_redesign/utils/constants.dart';
 
 void main() async {
@@ -66,6 +67,7 @@ class _FlexYemenAppState extends State<FlexYemenApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
+        ChangeNotifierProvider(create: (_) => HomeProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

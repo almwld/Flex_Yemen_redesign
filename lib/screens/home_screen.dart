@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flex_yemen_redesign/providers/category_provider.dart';
+import 'package:flex_yemen_redesign/providers/home_provider.dart';
 import 'package:flex_yemen_redesign/widgets/category_widget.dart';
+import 'package:flex_yemen_redesign/widgets/banner_slider.dart';
+import 'package:flex_yemen_redesign/widgets/offers_widget.dart';
 import 'package:flex_yemen_redesign/utils/constants.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,12 +18,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _loadAllData();
   }
 
-  Future<void> _loadData() async {
+  Future<void> _loadAllData() async {
     final categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
-    await categoryProvider.loadCategories();
+    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+    
+    await Future.wait([
+      categoryProvider.loadCategories(),
+      homeProvider.loadAllData(),
+    ]);
   }
 
   @override
@@ -28,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return RefreshIndicator(
-      onRefresh: _loadData,
+      onRefresh: _loadAllData,
       color: AppColors.primaryGold,
       child: CustomScrollView(
         slivers: [
@@ -75,7 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   categories: provider.categories,
                   isLoading: provider.isLoading,
                   onCategoryTap: (category) {
-                    // TODO: التنقل لصفحة القسم
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('تم اختيار: ${category.nameAr}'),
@@ -88,16 +95,62 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // مسافة
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
-          // هنا راح نضيف باقي المكونات:
-          // 2. السلايدر
-          // 3. العروض الحصرية
-          // 4. عروض الأسبوع
-          // 5. المتاجر المميزة
+          // 🎠 السلايدر (Banners)
+          SliverToBoxAdapter(
+            child: Consumer<HomeProvider>(
+              builder: (context, provider, child) {
+                return BannerSlider(
+                  banners: provider.banners,
+                  isLoading: provider._isLoadingBanners,
+                );
+              },
+            ),
+          ),
+
+          const SliverToBoxAdapter(child: SizedBox(height: 30)),
+
+          // 🎁 العروض الحصرية (Exclusive Offers)
+          SliverToBoxAdapter(
+            child: Consumer<HomeProvider>(
+              builder: (context, provider, child) {
+                return OffersWidget(
+                  title: '🔥 عروض حصرية',
+                  offers: provider.exclusiveOffers,
+                  isLoading: provider._isLoadingExclusive,
+                );
+              },
+            ),
+          ),
+
+          const SliverToBoxAdapter(child: SizedBox(height: 30)),
+
+          // ⭐ عروض الأسبوع (Weekly Deals)
+          SliverToBoxAdapter(
+            child: Consumer<HomeProvider>(
+              builder: (context, provider, child) {
+                return OffersWidget(
+                  title: '⭐ عروض الأسبوع',
+                  offers: provider.weeklyOffers,
+                  isLoading: provider._isLoadingWeekly,
+                );
+              },
+            ),
+          ),
+
+          const SliverToBoxAdapter(child: SizedBox(height: 30)),
+
+          // 🏪 متاجر مميزة (سنضيفها لاحقاً)
         ],
       ),
     );
   }
+}
+
+// ✅ إضافة الخاص المؤقت للوصول للحالات
+extension HomeProviderExtension on HomeProvider {
+  bool get _isLoadingBanners => _isLoadingBanners;
+  bool get _isLoadingExclusive => _isLoadingExclusive;
+  bool get _isLoadingWeekly => _isLoadingWeekly;
 }
