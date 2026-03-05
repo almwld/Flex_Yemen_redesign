@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flex_yemen_redesign/providers/store_provider.dart';
-import 'package:flex_yemen_redesign/utils/constants.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:flex_yemen_redesign/providers/store_provider.dart';
+import 'package:flex_yemen_redesign/models/store_model.dart'; // ✅ IMPORT مهم جداً
+import 'package:flex_yemen_redesign/utils/constants.dart';
 
 class StoreScreen extends StatefulWidget {
   final VoidCallback onAdd;
@@ -134,7 +135,7 @@ class _StoreScreenState extends State<StoreScreen> with SingleTickerProviderStat
   // 📱 صفحة الكل (منتجات مميزة + متاجر مميزة)
   Widget _buildAllPage(StoreProvider provider, bool isDark) {
     return provider.isLoading
-        ? _buildShimmerGrid()
+        ? _buildShimmerGrid(context)
         : CustomScrollView(
             slivers: [
               // منتجات مميزة
@@ -161,7 +162,7 @@ class _StoreScreenState extends State<StoreScreen> with SingleTickerProviderStat
   // 🏪 صفحة المتاجر
   Widget _buildStoresPage(StoreProvider provider, bool isDark) {
     return provider.isLoading
-        ? _buildShimmerGrid()
+        ? _buildShimmerGrid(context)
         : GridView.builder(
             padding: const EdgeInsets.all(16),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -188,7 +189,7 @@ class _StoreScreenState extends State<StoreScreen> with SingleTickerProviderStat
         // المنتجات المفلترة
         Expanded(
           child: provider.isLoading
-              ? _buildShimmerGrid()
+              ? _buildShimmerGrid(context)
               : GridView.builder(
                   padding: const EdgeInsets.all(16),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -598,7 +599,7 @@ class _StoreScreenState extends State<StoreScreen> with SingleTickerProviderStat
   }
 
   // Shimmer loading
-  Widget _buildShimmerGrid() {
+  Widget _buildShimmerGrid(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Shimmer.fromColors(

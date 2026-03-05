@@ -54,7 +54,7 @@ class OffersWidget extends StatelessWidget {
         SizedBox(
           height: 220,
           child: isLoading
-              ? _buildShimmerList(context) // ✅ تمرير context
+              ? _buildShimmerList(context)
               : offers.isEmpty
                   ? _buildEmptyState(context)
                   : ListView.builder(
@@ -92,7 +92,6 @@ class OffersWidget extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // الصورة
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(20),
@@ -172,7 +171,6 @@ class OffersWidget extends StatelessWidget {
               ),
             ],
           ),
-          // الشارة (badge)
           if (offer.badgeText != null)
             Positioned(
               top: 8,
@@ -196,7 +194,6 @@ class OffersWidget extends StatelessWidget {
                 ),
               ),
             ),
-          // خصم %
           if (offer.discountPercent != null)
             Positioned(
               top: 8,
@@ -225,7 +222,6 @@ class OffersWidget extends StatelessWidget {
     );
   }
 
-  // ✅ تم إضافة context كمعامل
   Widget _buildShimmerList(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
@@ -251,7 +247,6 @@ class OffersWidget extends StatelessWidget {
     );
   }
 
-  // ✅ تم إضافة context كمعامل
   Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Text(
