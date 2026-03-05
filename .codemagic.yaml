@@ -1,0 +1,165 @@
+workflows:
+  # 🏗️ Workflow الرئيسي للبناء مع Supabase
+  flex-yemen-supabase:
+    name: 🔥 Flex Yemen مع Supabase
+    max_build_duration: 45
+    instance_type: mac_mini_m1
+    
+    environment:
+      vars:
+        # 🔐 Supabase Config (تأتي من CodeMagic Secrets)
+        SUPABASE_URL: ${SUPABASE_URL}
+        SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+        
+        # 🎯 إصدار التطبيق
+        APP_VERSION: 1.0.0
+        APP_BUILD_NUMBER: ${CM_BUILD_NUMBER}
+        
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    
+    # 📦 تحضير البيئة
+    scripts:
+      - name: 🔧 تنظيف المشروع
+        script: |
+          flutter clean
+          rm -rf pubspec.lock
+          
+      - name: 📥 تحميل التبعيات
+        script: |
+          flutter pub get
+          
+      - name: 🔍 تحليل الكود
+        script: |
+          flutter analyze
+          
+      - name: 🧪 تشغيل الاختبارات
+        script: |
+          flutter test
+        ignore_failure: true
+          
+      - name: 🔨 بناء APK مع Supabase
+        script: |
+          flutter build apk --release \
+            --build-name=$APP_VERSION \
+            --build-number=$APP_BUILD_NUMBER \
+            --dart-define=SUPABASE_URL=$SUPABASE_URL \
+            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+          
+      - name: 📦 بناء AppBundle للمتجر
+        script: |
+          flutter build appbundle --release \
+            --build-name=$APP_VERSION \
+            --build-number=$APP_BUILD_NUMBER \
+            --dart-define=SUPABASE_URL=$SUPABASE_URL \
+            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+    
+    # 📤 الملفات الناتجة
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
+      - build/app/outputs/bundle/release/*.aab
+      - flutter_drive.log
+      
+    # 📧 الإشعارات والنشر
+    publishing:
+      email:
+        recipients:
+          - almwld@gmail.com
+        notify:
+          success: true
+          failure: true
+          
+      # 🔥 Firebase App Distribution (اختياري)
+      firebase_app_distribution:
+        service_credentials_file: firebase-credentials.json
+        app_id: ${FIREBASE_APP_ID}
+        testers: almwld@gmail.com
+        release_notes: |
+          🔥 تحديث Flex Yemen مع Supabase
+          
+          ✨ المميزات الجديدة:
+          - 🗄️ قاعدة بيانات Supabase متكاملة
+          - 🎠 سلايدر إعلانات ديناميكي
+          - 🏪 متجر متكامل مع فلترة
+          - 👤 نظام حسابات آمن
+          
+          🚀 الإصدار: $APP_VERSION ($APP_BUILD_NUMBER)
+
+  # 🌙 Workflow للبناء الليلي مع تحديث Supabase
+  flex-yemen-nightly:
+    name: 🌙 Nightly Build مع Supabase
+    max_build_duration: 30
+    instance_type: mac_mini
+    
+    environment:
+      vars:
+        SUPABASE_URL: ${SUPABASE_URL}
+        SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      flutter: stable
+    
+    triggering:
+      schedule:
+        - cron: "0 2 * * *"  # 2 صباحاً كل يوم
+        - branch_patterns:
+            - pattern: 'main'
+              include: true
+    
+    scripts:
+      - name: 🔨 بناء APK ليلي
+        script: |
+          flutter build apk --release \
+            --build-name=nightly-$(date +%Y%m%d) \
+            --build-number=$CM_BUILD_NUMBER \
+            --dart-define=SUPABASE_URL=$SUPABASE_URL \
+            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+    
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
+      
+    publishing:
+      email:
+        recipients:
+          - almwld@gmail.com
+        notify:
+          success: true
+          failure: true
+
+  # 🧪 Workflow للاختبار مع Supabase
+  flex-yemen-test:
+    name: 🧪 اختبار مع Supabase
+    max_build_duration: 20
+    instance_type: mac_mini
+    
+    environment:
+      vars:
+        SUPABASE_URL: ${SUPABASE_URL}
+        SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      flutter: stable
+    
+    triggering:
+      branch_patterns:
+        - pattern: 'develop'
+          include: true
+        - pattern: 'feature/*'
+          include: true
+    
+    scripts:
+      - name: 🔍 تحليل الكود
+        script: |
+          flutter analyze --fatal-infos
+          
+      - name: 🧪 اختبار وحدة
+        script: |
+          flutter test test/widget_test.dart
+          
+      - name: 🔌 اختبار اتصال Supabase
+        script: |
+          dart run test/supabase_test.dart
+
+# ⚡ إعدادات التخزين المؤقت للسرعة
+cache:
+  cache_paths:
+    - $FLUTTER_ROOT/.pub-cache
+    - $CM_BUILD_DIR/.dart_tool
+    - $CM_BUILD_DIR/ios/Pods
