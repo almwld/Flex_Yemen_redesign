@@ -1,31 +1,88 @@
-name: Build Flutter APK
+name: 🏗️ Build Flutter APK
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  build:
+  build-apk:
+    name: 🔨 Build Release APK
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup Flutter
+    - name: 📥 Checkout code
+      uses: actions/checkout@v3
+
+    - name: 🎯 Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '11'
+
+    - name: 🚀 Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.x'
-        
-    - name: Install dependencies
+        flutter-version: '3.13.9'
+        channel: 'stable'
+        cache: true
+
+    - name: 📦 Install dependencies
       run: flutter pub get
-      
-    - name: Build APK
+
+    - name: 🔍 Verify setup
+      run: |
+        flutter doctor
+        flutter --version
+
+    - name: 🛠️ Build APK (Universal)
       run: flutter build apk --release
-      
-    - name: Upload APK
+
+    - name: 📤 Upload APK
       uses: actions/upload-artifact@v3
       with:
-        name: release-apk
+        name: Flex-Yemen-APK
         path: build/app/outputs/flutter-apk/app-release.apk
+
+  create-release:
+    name: 📦 Create Release
+    needs: build-apk
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 Download APK
+      uses: actions/download-artifact@v3
+      with:
+        name: Flex-Yemen-APK
+        path: release/
+
+    - name: 📋 Get current date
+      id: date
+      run: echo "date=$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_OUTPUT
+
+    - name: 🏷️ Create Release
+      uses: ncipollo/release-action@v1
+      with:
+        tag: v${{ steps.date.outputs.date }}
+        name: 📱 Flex Yemen v${{ steps.date.outputs.date }}
+        body: |
+          ## ✅ تم بناء التطبيق بنجاح
+          
+          ### ✨ المميزات:
+          - 🎨 واجهة عصرية بتصميم ذهبي
+          - 🌙 وضع ليلي/نهاري
+          - 🗺️ خرائط اليمن الذكية
+          - 💳 محفظة مالية
+          - 💬 دردشة ووساطة
+          
+          ### 📥 التحميل:
+          - ملف APK واحد يعمل على جميع الأجهزة
+          
+          ### 🔧 الإصدار: ${{ steps.date.outputs.date }}
+        artifacts: "release/app-release.apk"
+        token: ${{ secrets.GITHUB_TOKEN }}
+        draft: false
+        prerelease: false
