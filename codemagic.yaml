@@ -66,8 +66,8 @@ workflows:
     
     triggering:
       schedule:
-        - cron: "0 2 * * *"
-          branch_patterns:
+        - cron: "0 2 * * *"  # ✅ كل يوم 2 صباحاً
+          patterns:
             - pattern: 'main'
               include: true
     
