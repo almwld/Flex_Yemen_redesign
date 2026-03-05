@@ -30,7 +30,7 @@ class CategoryWidget extends StatelessWidget {
               width: 65,
               height: 65,
               decoration: BoxDecoration(
-                color: isDark ? color.withOpacity(0.2) : color.withOpacity(0.1),
+                color: isDark ? AppColors.withOpacity(color, 0.2) : AppColors.withOpacity(color, 0.1),
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: color,
@@ -38,7 +38,7 @@ class CategoryWidget extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: color.withOpacity(0.3),
+                    color: AppColors.withOpacity(color, 0.3),
                     blurRadius: 8,
                     spreadRadius: 2,
                   ),
