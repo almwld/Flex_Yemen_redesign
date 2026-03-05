@@ -65,11 +65,9 @@ workflows:
       flutter: stable
     
     triggering:
-      schedule:
-        - cron: "0 2 * * *"  # ✅ كل يوم 2 صباحاً
-          patterns:
-            - pattern: 'main'
-              include: true
+      branch_patterns:
+        - pattern: 'main'
+          include: true
     
     scripts:
       - name: 🔨 بناء APK ليلي
