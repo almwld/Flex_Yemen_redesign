@@ -1,5 +1,5 @@
 name: flex_yemen_redesign
-description: Flex Yemen Modern App
+description: Flex Yemen Modern App - الأسطورة
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -9,8 +9,30 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  
+  # الأساسيات
   cupertino_icons: ^1.0.6
   flutter_svg: ^2.0.10+1
+  
+  # 🔥 Supabase للتخزين السحابي
+  supabase_flutter: ^2.3.4
+  
+  # 🖼️ تحميل الصور
+  cached_network_image: ^3.3.1
+  
+  # 🔄 إدارة الحالة
+  provider: ^6.1.1
+  
+  # 🎠 السلايدر
+  carousel_slider: ^4.2.1
+  
+  # 🎨 تنسيقات رائعة
+  shimmer: ^3.0.0
+  animations: ^2.0.8
+  
+  # 📱 أدوات
+  url_launcher: ^6.2.4
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
