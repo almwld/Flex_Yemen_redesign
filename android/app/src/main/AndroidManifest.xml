@@ -15,6 +15,11 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            
+            <!-- ✅ هذا السطر مهم جداً لتفعيل الإصدار الجديد -->
+            <meta-data
+                android:name="flutterEmbedding"
+                android:value="2" />
         </activity>
     </application>
 </manifest>
