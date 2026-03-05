@@ -1,0 +1,17 @@
+# مجلدات Termux الأخرى (حمايتها من الرفع)
+../*
+!../Flex_Yemen_redesign/
+
+# مجلدات Flutter
+build/
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+*.lock
+*.log
+
+# مجلدات النظام
+.DS_Store
+Thumbs.db
