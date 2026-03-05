@@ -54,9 +54,9 @@ class OffersWidget extends StatelessWidget {
         SizedBox(
           height: 220,
           child: isLoading
-              ? _buildShimmerList()
+              ? _buildShimmerList(context) // ✅ تمرير context
               : offers.isEmpty
-                  ? _buildEmptyState()
+                  ? _buildEmptyState(context)
                   : ListView.builder(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -225,7 +225,8 @@ class OffersWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildShimmerList() {
+  // ✅ تم إضافة context كمعامل
+  Widget _buildShimmerList(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Shimmer.fromColors(
@@ -250,7 +251,8 @@ class OffersWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  // ✅ تم إضافة context كمعامل
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Text(
         'لا توجد عروض حالياً',
