@@ -61,7 +61,7 @@ workflows:
       - build/app/outputs/bundle/release/*.aab
       - flutter_drive.log
       
-    # 📧 الإشعارات والنشر
+    # 📧 الإشعارات والنشر - ✅ تم إزالة Firebase App Distribution من هنا
     publishing:
       email:
         recipients:
@@ -69,22 +69,6 @@ workflows:
         notify:
           success: true
           failure: true
-          
-      # 🔥 Firebase App Distribution (اختياري)
-      firebase_app_distribution:
-        service_credentials_file: firebase-credentials.json
-        app_id: ${FIREBASE_APP_ID}
-        testers: almwld@gmail.com
-        release_notes: |
-          🔥 تحديث Flex Yemen مع Supabase
-          
-          ✨ المميزات الجديدة:
-          - 🗄️ قاعدة بيانات Supabase متكاملة
-          - 🎠 سلايدر إعلانات ديناميكي
-          - 🏪 متجر متكامل مع فلترة
-          - 👤 نظام حسابات آمن
-          
-          🚀 الإصدار: $APP_VERSION ($APP_BUILD_NUMBER)
 
   # 🌙 Workflow للبناء الليلي مع تحديث Supabase
   flex-yemen-nightly:
@@ -156,6 +140,14 @@ workflows:
       - name: 🔌 اختبار اتصال Supabase
         script: |
           dart run test/supabase_test.dart
+          
+    publishing:
+      email:
+        recipients:
+          - almwld@gmail.com
+        notify:
+          success: true
+          failure: true
 
 # ⚡ إعدادات التخزين المؤقت للسرعة
 cache:
