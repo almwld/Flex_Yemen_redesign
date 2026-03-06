@@ -9,8 +9,6 @@ workflows:
         SUPABASE_URL: ${SUPABASE_URL}
         SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
         APP_VERSION: 1.0.0
-        APP_BUILD_NUMBER: ${CM_BUILD_NUMBER}
-        
       flutter: stable
       xcode: latest
       cocoapods: default
@@ -22,13 +20,15 @@ workflows:
       - name: 📥 تحميل التبعيات
         script: flutter pub get
         
-      # ✅ تم حذف خطوة تحليل الكود تماماً
+      - name: 🔍 تحليل الكود
+        script: |
+          flutter analyze --no-fatal-infos --no-fatal-warnings
           
       - name: 🔨 بناء APK
         script: |
           flutter build apk --release \
             --build-name=$APP_VERSION \
-            --build-number=$APP_BUILD_NUMBER \
+            --build-number=$CM_BUILD_NUMBER_INT \
             --dart-define=SUPABASE_URL=$SUPABASE_URL \
             --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
           
@@ -36,49 +36,13 @@ workflows:
         script: |
           flutter build appbundle --release \
             --build-name=$APP_VERSION \
-            --build-number=$APP_BUILD_NUMBER \
+            --build-number=$CM_BUILD_NUMBER_INT \
             --dart-define=SUPABASE_URL=$SUPABASE_URL \
             --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
     
     artifacts:
       - build/app/outputs/flutter-apk/*.apk
       - build/app/outputs/bundle/release/*.aab
-      
-    publishing:
-      email:
-        recipients:
-          - almwld@gmail.com
-        notify:
-          success: true
-          failure: true
-
-  flex-yemen-nightly:
-    name: 🌙 Nightly Build
-    max_build_duration: 30
-    instance_type: mac_mini_m2
-    
-    environment:
-      vars:
-        SUPABASE_URL: ${SUPABASE_URL}
-        SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
-      flutter: stable
-    
-    triggering:
-      branch_patterns:
-        - pattern: 'main'
-          include: true
-    
-    scripts:
-      - name: 🔨 بناء APK ليلي
-        script: |
-          flutter build apk --release \
-            --build-name=nightly-$(date +%Y%m%d) \
-            --build-number=$CM_BUILD_NUMBER \
-            --dart-define=SUPABASE_URL=$SUPABASE_URL \
-            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
-    
-    artifacts:
-      - build/app/outputs/flutter-apk/app-release.apk
       
     publishing:
       email:
