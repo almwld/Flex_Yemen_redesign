@@ -1,48 +1,29 @@
 workflows:
-  flex-yemen-supabase:
-    name: 🔥 Flex Yemen مع Supabase
-    max_build_duration: 45
-    instance_type: mac_mini_m2
+  flex-yemen-build:
+    name: 🚀 بناء Flex Yemen
+    max_build_duration: 15
+    instance_type: mac_mini
     
     environment:
       vars:
         SUPABASE_URL: ${SUPABASE_URL}
         SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
-        APP_VERSION: 1.0.0
       flutter: stable
-      xcode: latest
-      cocoapods: default
     
     scripts:
-      - name: 🔧 تنظيف
-        script: flutter clean
-        
-      - name: 📥 تحميل التبعيات
+      - name: 📦 تحميل الحزم
         script: flutter pub get
         
-      - name: 🔍 تحليل الكود
-        script: |
-          flutter analyze --no-fatal-infos --no-fatal-warnings
-          
       - name: 🔨 بناء APK
         script: |
           flutter build apk --release \
-            --build-name=$APP_VERSION \
-            --build-number=$CM_BUILD_NUMBER_INT \
-            --dart-define=SUPABASE_URL=$SUPABASE_URL \
-            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
-          
-      - name: 📦 بناء AppBundle
-        script: |
-          flutter build appbundle --release \
-            --build-name=$APP_VERSION \
+            --build-name=1.0.0 \
             --build-number=$CM_BUILD_NUMBER_INT \
             --dart-define=SUPABASE_URL=$SUPABASE_URL \
             --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
     
     artifacts:
-      - build/app/outputs/flutter-apk/*.apk
-      - build/app/outputs/bundle/release/*.aab
+      - build/app/outputs/flutter-apk/app-release.apk
       
     publishing:
       email:
@@ -51,8 +32,3 @@ workflows:
         notify:
           success: true
           failure: true
-
-cache:
-  cache_paths:
-    - $FLUTTER_ROOT/.pub-cache
-    - $CM_BUILD_DIR/.dart_tool
