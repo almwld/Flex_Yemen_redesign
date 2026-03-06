@@ -2,7 +2,7 @@ workflows:
   flex-yemen-build:
     name: 🚀 بناء Flex Yemen
     max_build_duration: 15
-    instance_type: mac_mini_m2  # ✅ تم التعديل هنا
+    instance_type: mac_mini_m2
     
     environment:
       vars:
@@ -18,7 +18,7 @@ workflows:
         script: |
           flutter build apk --release \
             --build-name=1.0.0 \
-            --build-number=$CM_BUILD_NUMBER_INT \
+            --build-number=1 \
             --dart-define=SUPABASE_URL=$SUPABASE_URL \
             --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
     
